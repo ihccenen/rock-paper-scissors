@@ -96,9 +96,7 @@ function game() {
         }
     }
 
-    return message;
+    console.log(message);
 }
 
-let fiveRound = game();
-
-console.log(fiveRound);
+game();
