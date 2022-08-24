@@ -33,12 +33,54 @@ function playRound(playerSelection, computerSelection) {
             return "Draw"
         }
     } else {
-        return "Invalid option"
+        return "Invalid"
     }
-
 }
 
-const playerSelection = "rock";
-const computerSelection = getComputerChoice();
+function game() {
+    let computerWins = 0;
+    let playersWins = 0;
+    let draw = 0;
+    let message;
 
-console.log(playRound(playerSelection, computerSelection));
+    for (let i = 0; i < 5; i++) {
+        let playerSelection = prompt('Your choice', '');
+
+        if (playerSelection == null || playerSelection == '') {
+            message = 'Canceled'
+            break;
+        } else {
+            
+            let result = playRound(playerSelection, getComputerChoice());   
+            
+            console.log(result)
+            
+            if (result.includes('You Win')) {
+                playersWins++;
+            } else if (result.includes('You Lose')) {
+                computerWins++;
+            } else if (result.includes('Draw')) {
+                draw++;
+            } else if (result.includes('Invalid')) {
+                message = 'Invalid option'
+                break;
+            }
+        }
+    }
+
+    if (message != 'Invalid option' && message != 'Canceled') {
+        if (playersWins > computerWins) {
+            message = `You Win! Score: ${playersWins} wins and ${draw} draws`;
+        } else if (playersWins < computerWins) {
+            message = `You Lose! Score: ${computerWins} defeats and ${draw} draws`;
+        } else {
+            message = `Draw! Score: ${playersWins} wins and ${computerWins} defeats`;
+        }
+    }
+
+    return message;
+}
+
+let fiveRound = game();
+
+console.log(fiveRound);
