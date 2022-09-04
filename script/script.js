@@ -1,16 +1,10 @@
-function getComputerChoice() {
-    let options = ['Rock', 'Paper', 'Scissors'];
-    let choice = Math.floor(Math.random() * options.length)
-    
-    return options[choice];
-}
-
-function playRound(playerSelection, computerSelection) {
-    let playerChoice = playerSelection.toLowerCase();
+function playRound(playerSelection) {
+    let playerChoice = playerSelection;
+    let computerSelection = getComputerChoice();
     let result;
 
     if (playerChoice == 'rock') {
-        switch(computerSelection) {
+        switch (computerSelection) {
             case 'Paper':
                 result = 'You Lose! Paper beats Rock';
                 break;
@@ -23,7 +17,7 @@ function playRound(playerSelection, computerSelection) {
                 result = 'Draw';
         }
     } else if (playerChoice == 'paper') {
-        switch(computerSelection) {
+        switch (computerSelection) {
             case 'Scissors':
                 result = 'You Lose! Scissors beats Paper';
                 break;
@@ -36,7 +30,7 @@ function playRound(playerSelection, computerSelection) {
                 result = 'Draw';
         }
     } else if (playerChoice == 'scissors') {
-        switch(computerSelection) {
+        switch (computerSelection) {
             case 'Rock':
                 result = 'You Lose! Rock beats Scissors';
                 break;
@@ -48,55 +42,65 @@ function playRound(playerSelection, computerSelection) {
             default:
                 result = 'Draw';
         }
-    } else {
-        return 'Invalid option';
     }
 
     return result;
 }
 
-function game() {
-    let computerWins = 0;
-    let playersWins = 0;
-    let draw = 0;
-    let message;
+function getComputerChoice() {
+    const options = ['Rock', 'Paper', 'Scissors'];
+    let choice = Math.floor(Math.random() * options.length);
+    
+    return options[choice];
+}
 
-    for (let i = 0; i < 5; i++) {
-        let playerSelection = prompt('Your choice', '');
+function playerSelection (e) {
+    const choice = e.target.className;
+    const resultRound = playRound(choice);
+    scoreBoard.style.display = 'block';
+ 
+    if (wins < 5 && defeats < 5) {
+        const roundsHistory = document.createElement('div');
 
-        if (playerSelection == null || playerSelection == '') {
-            message = 'Canceled'
-            break;
+        roundsHistory.appendChild(document.createTextNode(''));
+
+        roundsHistory.textContent = `Round ${round}: ${resultRound}`;
+
+        scoreBoard.appendChild(roundsHistory);
+
+        if (wins < 5 && defeats < 5) {
+            if (resultRound.includes('Win')) {
+                wins++;
+                round++;
+            } else if (resultRound.includes('Lose')) {
+                defeats++;
+                round++;
+            } else if (resultRound.includes('Draw')) {
+                draws++;
+                round++;
+            } 
+    
+            result.textContent = `Results: ${wins} wins, ${defeats} defeats and ${draws} draws.`;
         } else {
-            
-            let result = playRound(playerSelection, getComputerChoice());   
-            
-            console.log(result)
-            
-            if (result.includes('You Win')) {
-                playersWins++;
-            } else if (result.includes('You Lose')) {
-                computerWins++;
-            } else if (result.includes('Draw')) {
-                draw++;
-            } else if (result.includes('Invalid')) {
-                message = 'Invalid option'
-                break;
+            if (wins > defeats) {
+                result.textContent = `Victory: ${wins} wins, ${defeats} defeats and ${draws} draws.`;
+            } else if (defeats > wins) {
+                result.textContent = `Defeat: ${wins} wins, ${defeats} defeats and ${draws} draws.`;
             }
         }
     }
-
-    if (message != 'Invalid option' && message != 'Canceled') {
-        if (playersWins > computerWins) {
-            message = `You Win! Score: ${playersWins} win and ${draw} draw`;
-        } else if (playersWins < computerWins) {
-            message = `You Lose! Score: ${computerWins} defeat and ${draw} draw`;
-        } else {
-            message = `Draw! Score: ${playersWins} win and ${draw} draw`;
-        }
-    }
-
-    console.log(message);
 }
 
-game();
+const btnChoice = Array.from(document.querySelectorAll('#choice'));
+const scoreBoard = document.querySelector('.score');
+const result = document.createElement('div');
+let round = 1;
+let wins = 0;
+let defeats = 0;
+let draws = 0;
+
+btnChoice.forEach(btn => btn.addEventListener('click', playerSelection)); 
+
+result.appendChild(document.createTextNode(`Results: ${wins} wins, ${defeats} defeats and ${draws} draws.`));
+
+scoreBoard.prepend(result);
